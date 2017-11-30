@@ -13,6 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+// Requirement 1 Endpoint
+// GET http://localhost:8080/vehicles/<MODEL YEAR>/<MANUFACTURER>/<MODEL>
+Route::get('vehicles/{model_year?}/{manufacturer?}/{model?}',
+    'VehicleController@getVehicleVariants');
+
+Route::post('vehicles', 'VehicleController@getVehicleVariantsJSON');
