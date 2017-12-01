@@ -1,10 +1,6 @@
 # crash-ratings-api
 
-<<<<<<< HEAD
 Laravel 5.5 API that consumes NHTSA API [(Link Here)](https://one.nhtsa.gov/webapi/Default.aspx?SafetyRatings/API/5), collecting crash ratings and displaying then through an API.
-=======
-Laravel 5.5 application that consumes NHTSA API, collecting crash ratings and displaying then through an API.
->>>>>>> 9bd1e2c1457785325fcefe6bfc5cc6e39185c1cd
 
 ## Environment Requirements
 
