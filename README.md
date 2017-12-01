@@ -13,7 +13,7 @@ Laravel 5.5 API that consumes NHTSA API [(Link Here)](https://one.nhtsa.gov/weba
 - Composer
 - Nginx/Apache
 
- You can use current version of Homestead as well.
+ You can use the current version of Homestead as well.
 
 ## Installation
 
