@@ -1,6 +1,6 @@
 # crash-ratings-api
 
-Laravel 5.5 API that consumes NHTSA API, collecting crash ratings, 
+Laravel 5.5 application that consumes NHTSA API, collecting crash ratings and displaying then through an API.
 
 ## Environment Requirements
 
