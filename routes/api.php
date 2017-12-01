@@ -13,9 +13,9 @@ use Illuminate\Http\Request;
 |
 */
 
-// Requirement 1 Endpoint
-// GET http://localhost:8080/vehicles/<MODEL YEAR>/<MANUFACTURER>/<MODEL>
+// Requirement 1 and 3 Endpoint
 Route::get('vehicles/{model_year?}/{manufacturer?}/{model?}',
     'VehicleController@getVehicleVariants');
 
+// Requirement 2 and 3 Endpoint
 Route::post('vehicles', 'VehicleController@getVehicleVariantsJSON');

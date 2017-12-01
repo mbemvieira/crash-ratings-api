@@ -3,13 +3,21 @@
 namespace App\Http\Controllers;
 
 use Validator;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Psr7\Request as GuzzleHttpRequest;
+use App\Services\VehicleService;
 use Illuminate\Http\Request;
 
 class VehicleController extends Controller
 {
+    /**
+     * @var VehicleService
+     */
+    private $vehicleService;
+    
+    public function __construct(VehicleService $vehicleService)
+    {
+        $this->vehicleService = $vehicleService;
+    }
+
     /**
      * Query available vehicle variants
      * 
@@ -19,12 +27,10 @@ class VehicleController extends Controller
      * @param  string  $model
      * @return array
      */
-    public function getVehicleVariants(
-        Request $request,
-        $model_year = null,
-        $manufaturer = null,
-        $model = null
-    ) {
+    public function getVehicleVariants(Request $request, $model_year = null,
+        $manufaturer = null, $model = null
+    )
+    {
         if (is_null($model_year) || is_null($manufaturer) || is_null($model) ||
             ! preg_match('/[0-9]+/', $model_year) ||
             ! preg_match('/[A-Za-z]+(-[A-Za-z]+)?/', $manufaturer) ||
@@ -38,33 +44,14 @@ class VehicleController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->defaultResponse();
+            return $this->vehicleService->defaultVehiclesArray();
         }
 
-        // https://one.nhtsa.gov/webapi/api/SafetyRatings/modelyear/2013/make/Acura/model/rdx?format=json
-        /* $client = new Client();
-        $base_uri = 'https://one.nhtsa.gov/webapi/api/SafetyRatings/';
-        $uri_parameters = 'modelyear/'. $model_year .
-            '/make/'. $manufaturer .'/model/'. $model .'?format=json';
+        $rating = $request->input('withRating', false);
 
-        try {
-            $nhtsa_request = new GuzzleHttpRequest('GET', $base_uri.$uri_parameters);
-            $nhtsa_response = $client->send($nhtsa_request);
-            $body = $nhtsa_response->getBody();
-        } catch (RequestException $e) {
-            return $this->defaultResponse();
-        } */
-
-        $client = new Client();
-        $res = $client->request('GET',
-            'https://one.nhtsa.gov/webapi/api/SafetyRatings/modelyear/2013/make/Acura/model/rdx?format=json');
-        $body = $res->getBody();
-
-        $response = [
-            $body
-        ];
-
-        return response()->json($response, 200,
+        $vehicles = $this->vehicleService->findVehicles($model_year, $manufaturer, $model, $rating);
+        
+        return response()->json($vehicles, 200,
             ['Content-type' => 'application/json; charset=utf-8'],
             JSON_UNESCAPED_UNICODE);
     }
@@ -75,7 +62,8 @@ class VehicleController extends Controller
      * @param  Illuminate\Http\Request  $request
      * @return array
      */
-    public function getVehicleVariantsJSON(Request $request) {
+    public function getVehicleVariantsJSON(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'modelYear' => 'required|numeric',
             'manufacturer' => 'required|alpha_dash',
@@ -84,30 +72,17 @@ class VehicleController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return $this->defaultResponse();
+            return $this->vehicleService->defaultVehiclesArray();
         }
 
-        $response = [
-            'OK'
-        ];
+        $model_year = $request->input('modelYear');
+        $manufaturer = $request->input('manufacturer');
+        $model = $request->input('model');
+        $rating = $request->input('withRating', false);
 
-        return response()->json($response, 200,
-            ['Content-type' => 'application/json; charset=utf-8'],
-            JSON_UNESCAPED_UNICODE);
-    }
+        $vehicles = $this->vehicleService->findVehicles($model_year, $manufaturer, $model, $rating);
 
-    /**
-     * Default error response
-     * 
-     * @return Illuminate\Http\Response
-     */
-    public function defaultResponse() {
-        $response = [
-            'Count' => 0,
-            'Results' => []
-        ];
-
-        return response()->json($response, 200,
+        return response()->json($vehicles, 200,
             ['Content-type' => 'application/json; charset=utf-8'],
             JSON_UNESCAPED_UNICODE);
     }
