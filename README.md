@@ -31,9 +31,18 @@ cp .env.testing .env
 php artisan key:generate
 ```
 
+## PHPUnit tests
+
+Inside project's folder, you can run PHPUnit tests with:
+
+```bash
+./vendor/bin/phpunit
+```
+
 ## API Reference
 
 ```
 GET <APP-HOSTNAME>/vehicles/<MODEL YEAR>/<MANUFACTURER>/<MODEL>
 POST <APP-HOSTNAME>/vehicles
+GET <APP-HOSTNAME>/vehicles/<MODEL YEAR>/<MANUFACTURER>/<MODEL>?withRating=true
 ```

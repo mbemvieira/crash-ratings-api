@@ -36,18 +36,20 @@ class VehicleController extends Controller
             ! preg_match('/[A-Za-z]+(-[A-Za-z]+)?/', $manufaturer) ||
             ! preg_match('/[A-Za-z]+(-[A-Za-z]+)?/', $model)
         ) {
-            return $this->defaultResponse();
-        }
-
-        $validator = Validator::make($request->all(), [
-            'withRating' => 'boolean'
-        ]);
-
-        if ($validator->fails()) {
             return $this->vehicleService->defaultVehiclesArray();
         }
 
-        $rating = $request->input('withRating', false);
+        $validator = Validator::make($request->all(), [
+            'withRating' => [
+                'regex:/true/'
+            ]
+        ]);
+
+        if ($validator->fails()) {
+            $rating = false;
+        } else {
+            $rating = $request->input('withRating', false);
+        }
 
         $vehicles = $this->vehicleService->findVehicles($model_year, $manufaturer, $model, $rating);
         
@@ -67,8 +69,7 @@ class VehicleController extends Controller
         $validator = Validator::make($request->all(), [
             'modelYear' => 'required|numeric',
             'manufacturer' => 'required|alpha_dash',
-            'model' => 'required|alpha_dash',
-            'withRating' => 'boolean'
+            'model' => 'required|alpha_dash'
         ]);
 
         if ($validator->fails()) {
@@ -78,7 +79,7 @@ class VehicleController extends Controller
         $model_year = $request->input('modelYear');
         $manufaturer = $request->input('manufacturer');
         $model = $request->input('model');
-        $rating = $request->input('withRating', false);
+        $rating = false;
 
         $vehicles = $this->vehicleService->findVehicles($model_year, $manufaturer, $model, $rating);
 
